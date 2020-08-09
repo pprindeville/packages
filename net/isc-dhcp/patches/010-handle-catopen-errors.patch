@@ -1,0 +1,43 @@
+From daade37977fafee12c7b3c1483516e010d2b74a6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20K=C4=99pie=C5=84?= <michal@isc.org>
+Date: Mon, 13 Jan 2020 14:03:11 +0100
+Subject: [PATCH] Handle catopen() errors
+
+musl libc's implementation of catgets() crashes when its first argument
+is -1 instead of a proper message catalog descriptor.  Prevent that from
+happening by making isc_msgcat_get() return the default text if the
+prior call to catopen() returns an error.
+---
+ lib/isc/nls/msgcat.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/lib/isc/nls/msgcat.c b/lib/isc/nls/msgcat.c
+index ab09b94579..dd3d177fb3 100644
+--- a/lib/isc/nls/msgcat.c
++++ b/lib/isc/nls/msgcat.c
+@@ -62,9 +62,8 @@ isc_msgcat_open(const char *name, isc_msgcat_t **msgcatp) {
+ 
+ #ifdef HAVE_CATGETS
+ 	/*
+-	 * We don't check if catopen() fails because we don't care.
+-	 * If it does fail, then when we call catgets(), it will use
+-	 * the default string.
++	 * We don't check if catopen() fails because isc_msgcat_get() takes
++	 * care of that before calling catgets().
+ 	 */
+ 	msgcat->catalog = catopen(name, 0);
+ #endif
+@@ -112,8 +111,9 @@ isc_msgcat_get(isc_msgcat_t *msgcat, int set, int message,
+ 	REQUIRE(default_text != NULL);
+ 
+ #ifdef HAVE_CATGETS
+-	if (msgcat == NULL)
++	if (msgcat == NULL || msgcat->catalog == (nl_catd)(-1)) {
+ 		return (default_text);
++	}
+ 	return (catgets(msgcat->catalog, set, message, default_text));
+ #else
+ 	return (default_text);
+-- 
+GitLab
+
