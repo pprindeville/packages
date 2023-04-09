@@ -207,6 +207,8 @@ define Package/vim/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_tiny $(1)/usr/bin/vim
 	$(INSTALL_DIR) $(1)/usr/share/vim
 	$(INSTALL_CONF) ./files/defaults.vim $(1)/usr/share/vim
+	$(INSTALL_DIR) $(1)/lib/upgrade/ignore.d
+	$(INSTALL_DATA) ./files/vim.ignore $(1)/lib/upgrade/ignore.d/vim
 endef
 
 define Package/vim-full/install
@@ -214,6 +216,8 @@ define Package/vim-full/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_normal $(1)/usr/bin/vim
 	$(INSTALL_DIR) $(1)/usr/share/vim
 	$(LN) vim $(1)/usr/bin/vimdiff
+	$(INSTALL_DIR) $(1)/lib/upgrade/ignore.d
+	$(INSTALL_DATA) ./files/vim.ignore $(1)/lib/upgrade/ignore.d/vim-full
 endef
 
 define Package/vim-fuller/install
@@ -221,6 +225,8 @@ define Package/vim-fuller/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/vim_huge $(1)/usr/bin/vim
 	$(INSTALL_DIR) $(1)/usr/share/vim
 	$(LN) vim $(1)/usr/bin/vimdiff
+	$(INSTALL_DIR) $(1)/lib/upgrade/ignore.d
+	$(INSTALL_DATA) ./files/vim.ignore $(1)/lib/upgrade/ignore.d/vim-fuller
 endef
 
 define Package/vim-runtime/install
