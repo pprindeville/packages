@@ -19,6 +19,15 @@ config BIND_LIBXML2
 		libxml2 is required to report server statistics in XML
 		format. Building with libjson support will require the
 		libxml2 package to be installed as well.
+
+config BIND_JEMALLOC
+	bool
+	default n
+	prompt "Include jemalloc for heap debugging in bind-server"
+	help
+		BIND 9 allows linking against jemalloc which can provide
+		more detailed memory usage information to assist in
+		diagnosing heap utilization issues.
 endif
 
 if PACKAGE_bind-libs
